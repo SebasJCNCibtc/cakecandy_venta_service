@@ -1,5 +1,6 @@
 package com.proyecto.cakecandy_venta_service.web.controller;
 
+import com.proyecto.cakecandy_venta_service.application.dto.VentaDetalleDto;
 import com.proyecto.cakecandy_venta_service.application.dto.VentaRequestDto;
 import com.proyecto.cakecandy_venta_service.application.dto.VentaResponseDto;
 import com.proyecto.cakecandy_venta_service.application.service.VentaService;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
-import com.proyecto.cakecandy_venta_service.application.dto.VentaDetalleDto;
+
 @RestController
 @RequestMapping("/api/ventas")
 @RequiredArgsConstructor
@@ -61,7 +62,7 @@ public class VentaController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("attachment", "detalle_venta_" + id + ".pdf");
-            // ... (resto de headers)
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
             return new ResponseEntity<>(pdfReport, headers, HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

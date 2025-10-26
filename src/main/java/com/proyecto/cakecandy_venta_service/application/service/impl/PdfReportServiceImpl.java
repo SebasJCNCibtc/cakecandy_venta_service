@@ -26,12 +26,13 @@ public class PdfReportServiceImpl {
             document.addPage(page);
 
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                // CORRECCIÓN: Llamamos a los métodos por separado
                 addWatermark(contentStream, page);
                 addHeader(contentStream, page);
 
-                writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 16, 50, 720, "Reporte de Historial de Ventas");
-                drawVentasTable(contentStream, ventas, 700);
+                // Ajustar posición del título principal hacia abajo
+                writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 16, 50, 650, "Reporte de Historial de Ventas");
+                // Ajustar posición de la tabla hacia abajo
+                drawVentasTable(contentStream, ventas, 630);
                 addFooter(contentStream, 1);
             }
 
@@ -47,10 +48,10 @@ public class PdfReportServiceImpl {
             document.addPage(page);
 
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                // CORRECCIÓN: Llamamos a los métodos por separado
                 addWatermark(contentStream, page);
                 addHeader(contentStream, page);
 
+                // Ajustar posiciones para el detalle de venta
                 drawInfoCard(contentStream, venta);
                 drawDetailTable(contentStream, venta);
                 addFooter(contentStream, 1);
@@ -102,7 +103,8 @@ public class PdfReportServiceImpl {
     private void drawInfoCard(PDPageContentStream contentStream, VentaDetalleDto venta) throws IOException {
         float margin = 50;
         float cardWidth = 500;
-        float yStart = 720;
+        // Ajustar posición de la tarjeta de información hacia abajo
+        float yStart = 650;
 
         writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18, margin, yStart, "Detalle de Venta #" + venta.getIdVenta());
         writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10, margin, yStart - 15, venta.getFechaVenta().format(DateTimeFormatter.ofPattern("EEEE, dd 'de' MMMM 'de' yyyy, hh:mm a")));
@@ -117,12 +119,11 @@ public class PdfReportServiceImpl {
         writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 24, margin + 350, yStart - 75, "S/ " + venta.getTotal().toString());
     }
 
-    // Este método debe recibir el objeto 'venta' completo para conocer el total
     private void drawDetailTable(PDPageContentStream contentStream, VentaDetalleDto venta) throws IOException {
-        // Obtenemos la lista de detalles desde el objeto venta
         List<DetalleVentaConProductoDto> detalles = venta.getDetalles();
         float margin = 50;
-        float y = 550;
+        // Ajustar posición de la tabla de detalles hacia abajo
+        float y = 480;
         float rowHeight = 20f;
         float tableWidth = 500f;
         float[] colWidths = {250, 80, 80, 90};
@@ -144,8 +145,6 @@ public class PdfReportServiceImpl {
 
         y -= rowHeight;
 
-        // --- CORRECCIÓN DE LÓGICA DEL LOOP ---
-        // Este loop ahora solo se encarga de dibujar los detalles de cada producto
         for (DetalleVentaConProductoDto detalle : detalles) {
             contentStream.setStrokingColor(Color.LIGHT_GRAY);
             contentStream.moveTo(margin, y);
@@ -155,7 +154,6 @@ public class PdfReportServiceImpl {
             textX = margin + 5;
             textY = y + 5;
 
-            // Usamos la sintaxis correcta de Java para llamar a los métodos
             writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10, textX, textY, detalle.getNombreProducto());
             textX += colWidths[0];
             writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10, textX, textY, String.valueOf(detalle.getCantidad()));
@@ -167,8 +165,7 @@ public class PdfReportServiceImpl {
             y -= rowHeight;
         }
 
-        // --- CORRECCIÓN DE LÓGICA DEL TOTAL ---
-        // La fila del TOTAL se dibuja una sola vez, DESPUÉS del loop
+        // Fila del TOTAL
         contentStream.setStrokingColor(Color.DARK_GRAY);
         contentStream.setLineWidth(1f);
         contentStream.moveTo(margin, y);
@@ -182,29 +179,30 @@ public class PdfReportServiceImpl {
 
     private void addHeader(PDPageContentStream contentStream, PDPage page) throws IOException {
         String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-        writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18, 50, 790, "Cake Candy");
-        writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10, 450, 790, "Fecha: " + fecha);
+        // Ajustar posición del header hacia abajo
+        writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18, 50, 750, "Cake Candy");
+        writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10, 450, 750, "Fecha: " + fecha);
         contentStream.setStrokingColor(Color.DARK_GRAY);
         contentStream.setLineWidth(1.5f);
-        contentStream.moveTo(50, 780);
-        contentStream.lineTo(page.getMediaBox().getWidth() - 50, 780);
+        contentStream.moveTo(50, 740);
+        contentStream.lineTo(page.getMediaBox().getWidth() - 50, 740);
         contentStream.stroke();
     }
 
     private void addWatermark(PDPageContentStream contentStream, PDPage page) throws IOException {
         PDExtendedGraphicsState gs = new PDExtendedGraphicsState();
-        gs.setNonStrokingAlphaConstant(0.08f); // Hacemos la marca de agua más sutil
+        gs.setNonStrokingAlphaConstant(0.08f);
         contentStream.setGraphicsStateParameters(gs);
 
         contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 100);
         contentStream.setNonStrokingColor(Color.GRAY);
 
         contentStream.saveGraphicsState();
-        // Coordenadas ajustadas para un mejor centrado
+        // Ajustar posición del watermark para mejor centrado
         contentStream.transform(new org.apache.pdfbox.util.Matrix(
                 (float) Math.cos(Math.toRadians(45)), (float) Math.sin(Math.toRadians(45)),
                 -(float) Math.sin(Math.toRadians(45)), (float) Math.cos(Math.toRadians(45)),
-                page.getMediaBox().getWidth() / 3, page.getMediaBox().getHeight() / 4));
+                page.getMediaBox().getWidth() / 3, page.getMediaBox().getHeight() / 3));
 
         contentStream.beginText();
         contentStream.showText("Cake Candy");
@@ -212,16 +210,16 @@ public class PdfReportServiceImpl {
 
         contentStream.restoreGraphicsState();
 
-        // Restaurar estado gráfico para el resto del contenido
+        // Restaurar estado gráfico
         gs.setNonStrokingAlphaConstant(1.0f);
         contentStream.setGraphicsStateParameters(gs);
         contentStream.setNonStrokingColor(Color.BLACK);
     }
 
     private void addFooter(PDPageContentStream contentStream, int pageNum) throws IOException {
-        writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10, 270, 30, "Página " + pageNum);
+        // Ajustar posición del footer
+        writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10, 270, 50, "Página " + pageNum);
     }
-
 
     private void writeText(PDPageContentStream stream, PDType1Font font, int fontSize, float x, float y, String text) throws IOException {
         stream.setFont(font, fontSize);

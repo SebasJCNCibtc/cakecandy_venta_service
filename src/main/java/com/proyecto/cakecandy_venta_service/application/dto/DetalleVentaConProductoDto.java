@@ -4,7 +4,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-// DTO para el detalle de cada producto en la venta
 @Data
 public class DetalleVentaConProductoDto {
     private String nombreProducto;
