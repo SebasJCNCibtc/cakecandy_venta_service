@@ -25,9 +25,7 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // El admin puede ver el listado y el detalle de CUALQUIER venta
-                        .requestMatchers(HttpMethod.GET, "/api/ventas", "/api/ventas/**").hasAuthority("ROLE_ADMIN")
-                        // Cualquier usuario autenticado puede crear una venta
+                        .requestMatchers(HttpMethod.GET, "/api/ventas", "/api/ventas/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                         .requestMatchers(HttpMethod.POST, "/api/ventas").authenticated()
                         .anyRequest().authenticated()
                 )
