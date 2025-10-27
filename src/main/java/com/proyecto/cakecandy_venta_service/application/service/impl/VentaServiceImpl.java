@@ -120,14 +120,11 @@ public class VentaServiceImpl implements VentaService {
     }
 
     public BigDecimal getTotalVentasHoy() {
-        // Define el inicio y el fin del día actual
         LocalDateTime inicioDelDia = java.time.LocalDate.now().atStartOfDay();
         LocalDateTime finDelDia = java.time.LocalDate.now().atTime(23, 59, 59);
 
-        // Busca las ventas en el repositorio dentro de ese rango de tiempo
         List<Venta> ventasDeHoy = ventaRepository.findByFechaVentaBetween(inicioDelDia, finDelDia);
 
-        // Suma los totales de todas las ventas encontradas
         return ventasDeHoy.stream()
                 .map(Venta::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

@@ -36,7 +36,6 @@ public class VentaController {
         return ResponseEntity.ok(ventaService.findAll());
     }
 
-    // NUEVO ENDPOINT
     @GetMapping("/{id}")
     public ResponseEntity<VentaDetalleDto> getVentaById(@PathVariable Integer id) {
         return ResponseEntity.ok(ventaService.findVentaConDetalles(id));

@@ -29,9 +29,7 @@ public class PdfReportServiceImpl {
                 addWatermark(contentStream, page);
                 addHeader(contentStream, page);
 
-                // Ajustar posición del título principal hacia abajo
                 writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 16, 50, 650, "Reporte de Historial de Ventas");
-                // Ajustar posición de la tabla hacia abajo
                 drawVentasTable(contentStream, ventas, 630);
                 addFooter(contentStream, 1);
             }
@@ -51,7 +49,6 @@ public class PdfReportServiceImpl {
                 addWatermark(contentStream, page);
                 addHeader(contentStream, page);
 
-                // Ajustar posiciones para el detalle de venta
                 drawInfoCard(contentStream, venta);
                 drawDetailTable(contentStream, venta);
                 addFooter(contentStream, 1);
@@ -103,7 +100,6 @@ public class PdfReportServiceImpl {
     private void drawInfoCard(PDPageContentStream contentStream, VentaDetalleDto venta) throws IOException {
         float margin = 50;
         float cardWidth = 500;
-        // Ajustar posición de la tarjeta de información hacia abajo
         float yStart = 650;
 
         writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18, margin, yStart, "Detalle de Venta #" + venta.getIdVenta());
@@ -122,19 +118,16 @@ public class PdfReportServiceImpl {
     private void drawDetailTable(PDPageContentStream contentStream, VentaDetalleDto venta) throws IOException {
         List<DetalleVentaConProductoDto> detalles = venta.getDetalles();
         float margin = 50;
-        // Ajustar posición de la tabla de detalles hacia abajo
         float y = 480;
         float rowHeight = 20f;
         float tableWidth = 500f;
         float[] colWidths = {250, 80, 80, 90};
 
-        // Dibuja el fondo de la cabecera
         contentStream.setNonStrokingColor(Color.decode("#F3F4F6"));
         contentStream.addRect(margin, y, tableWidth, rowHeight);
         contentStream.fill();
         contentStream.setNonStrokingColor(Color.BLACK);
 
-        // Escribe el texto de la cabecera
         String[] headers = {"Producto", "Cantidad", "P. Unitario", "Subtotal"};
         float textX = margin + 5;
         float textY = y + 5;
@@ -165,7 +158,6 @@ public class PdfReportServiceImpl {
             y -= rowHeight;
         }
 
-        // Fila del TOTAL
         contentStream.setStrokingColor(Color.DARK_GRAY);
         contentStream.setLineWidth(1f);
         contentStream.moveTo(margin, y);
@@ -179,7 +171,6 @@ public class PdfReportServiceImpl {
 
     private void addHeader(PDPageContentStream contentStream, PDPage page) throws IOException {
         String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-        // Ajustar posición del header hacia abajo
         writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18, 50, 750, "Cake Candy");
         writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10, 450, 750, "Fecha: " + fecha);
         contentStream.setStrokingColor(Color.DARK_GRAY);
@@ -198,7 +189,6 @@ public class PdfReportServiceImpl {
         contentStream.setNonStrokingColor(Color.GRAY);
 
         contentStream.saveGraphicsState();
-        // Ajustar posición del watermark para mejor centrado
         contentStream.transform(new org.apache.pdfbox.util.Matrix(
                 (float) Math.cos(Math.toRadians(45)), (float) Math.sin(Math.toRadians(45)),
                 -(float) Math.sin(Math.toRadians(45)), (float) Math.cos(Math.toRadians(45)),
@@ -210,14 +200,12 @@ public class PdfReportServiceImpl {
 
         contentStream.restoreGraphicsState();
 
-        // Restaurar estado gráfico
         gs.setNonStrokingAlphaConstant(1.0f);
         contentStream.setGraphicsStateParameters(gs);
         contentStream.setNonStrokingColor(Color.BLACK);
     }
 
     private void addFooter(PDPageContentStream contentStream, int pageNum) throws IOException {
-        // Ajustar posición del footer
         writeText(contentStream, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10, 270, 50, "Página " + pageNum);
     }
 

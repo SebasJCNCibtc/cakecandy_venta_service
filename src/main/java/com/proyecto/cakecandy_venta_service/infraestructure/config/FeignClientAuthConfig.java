@@ -15,13 +15,10 @@ public class FeignClientAuthConfig {
         return new RequestInterceptor() {
             @Override
             public void apply(RequestTemplate template) {
-                // Obtenemos la petición HTTP actual
                 ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                 if (attributes != null) {
-                    // Extraemos el encabezado "Authorization" de la petición original
                     String authorizationHeader = attributes.getRequest().getHeader("Authorization");
                     if (authorizationHeader != null && !authorizationHeader.isEmpty()) {
-                        // Añadimos el encabezado a la plantilla de la petición de Feign
                         template.header("Authorization", authorizationHeader);
                     }
                 }

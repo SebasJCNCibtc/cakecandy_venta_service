@@ -7,12 +7,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-// DTO principal para la respuesta completa
 @Data
 public class VentaDetalleDto {
     private Integer idVenta;
     private LocalDateTime fechaVenta;
     private BigDecimal total;
-    private UsuarioDto cliente; // Objeto con los datos del usuario
+    private UsuarioDto cliente;
     private List<DetalleVentaConProductoDto> detalles;
 }
